@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Bayex</string>
+    <string name="hypothesis_name">Hypothesis Name</string>
+    <string name="button">Button</string>
+    <string name="poprzednia">poprzednia</string>
+    <string name="nastepna">nastepna</string>
+    <string name="hypothesis_description">Hypothesis Description</string>
+    <string name="nazwa_hipotezy">nazwa hipotezy:</string>
+    <string name="opis_hipotezy">opis hipotezy:</string>
+    <string name="prawdopodobienstwo">prawdopodobienstwo:</string>
+    <string name="opis">opis:</string>
+    <string name="nazwa_symptomu">nazwa symptomu:</string>
+    <string name="pytanie">pytanie:</string>
+    <string name="nastepny">nastepny</string>
+    <string name="title_activity_expertise">Expertise</string>
+</resources>

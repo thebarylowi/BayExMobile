@@ -3,20 +3,16 @@ package com.bayex.bayex.Utils;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.bayex.bayex.Bayex.BindingsOfMetaknowledgeQuestions;
 import com.bayex.bayex.Bayex.BindingSymptomHypothesis;
 import com.bayex.bayex.Bayex.GeneralSymptom;
 import com.bayex.bayex.Bayex.KnowledgeBase;
 import com.bayex.bayex.Bayex.Symptom;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Timer;
-
 import com.bayex.bayex.Bayex.Hypothesis;
 import com.bayex.bayex.MainActivity;
 

@@ -1,25 +1,10 @@
 package com.bayex.bayex.Utils;
 
 import android.util.Log;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-
-/**
- * Created by neron on 18.12.2017.
- */
 
 public class Conversion {
     public static int byteMoved = 0;

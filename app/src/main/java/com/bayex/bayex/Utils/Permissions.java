@@ -1,21 +1,12 @@
 package com.bayex.bayex.Utils;
 
 import android.Manifest;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.Settings;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.bayex.bayex.MainActivity;
-
-/**
- * Created by neron on 06.11.2017.
- */
 
 public class Permissions {
 

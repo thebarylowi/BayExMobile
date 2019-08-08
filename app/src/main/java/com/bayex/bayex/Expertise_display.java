@@ -8,16 +8,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
-
 import com.bayex.bayex.Bayex.Answers;
 import com.bayex.bayex.Bayex.BindingSymptomHypothesis;
 import com.bayex.bayex.Bayex.GeneralSymptom;
 import com.bayex.bayex.Bayex.Hypothesis;
 import com.bayex.bayex.Bayex.Symptom;
 import com.bayex.bayex.Bayex.Test;
-
 import java.util.ArrayList;
+
+//TODO: piori calculation handle
 
 public class Expertise_display extends AppCompatActivity {
 
@@ -81,22 +80,23 @@ public class Expertise_display extends AppCompatActivity {
     {
         //TODO: handle click
         addAnswer(p_question, 4);
-
+xx` `
     }
 
-    private int checkAndCalculateAnswer(int questionNumber, boolean control)
+    private int afterAns(int value)
     {
-        int result = 0;
-        if (control)
-        {
-            
-        }
-        else
+        int next, il, v = 0;
+        String msg;
+
+        if (value == -2)
         {
 
         }
-        return result;
+        return 1;
     }
+
+    void whichQue()
+    {}
 
     private void handleRatherYesAnswerToGeneralSymptom(String p_question)
     {

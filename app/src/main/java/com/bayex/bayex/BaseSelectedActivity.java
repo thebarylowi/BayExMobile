@@ -17,7 +17,7 @@ import com.bayex.bayex.Utils.Files;
 
 import java.util.ArrayList;
 
-public class BaseSelectedActivity extends AppCompatActivity {
+public class    BaseSelectedActivity extends AppCompatActivity {
     private Button bStartAnalyze;
     private Button bShowBase;
     private TextView tvBaseVersion;

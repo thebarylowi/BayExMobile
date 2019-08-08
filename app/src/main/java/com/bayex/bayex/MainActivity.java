@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
-
-import com.bayex.bayex.Bayex.Hypothesis;
 import com.bayex.bayex.Dialogs.BayFilesDialog;
 import com.bayex.bayex.Utils.Conversion;
 import com.bayex.bayex.Utils.Files;

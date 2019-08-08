@@ -7,9 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.bayex.bayex.Bayex.Hypothesis;
-
 import java.util.ArrayList;
 
 

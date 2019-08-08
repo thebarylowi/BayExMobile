@@ -5,23 +5,12 @@ import android.os.Bundle;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.bayex.bayex.Bayex.GeneralSymptom;
 import com.bayex.bayex.Bayex.Hypothesis;
 import com.bayex.bayex.Bayex.Symptom;
-import com.bayex.bayex.Utils.Files;
-
 import java.util.ArrayList;
-
-
-/**
- * Created by neron on 14.12.2017.
- */
 
 public class ShowBaseActivity extends AppCompatActivity {
     private Button bHipotesis;

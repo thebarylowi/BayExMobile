@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.WindowManager;
-
 import com.bayex.bayex.BaseSelectedActivity;
 import com.bayex.bayex.Bayex.BindingsOfMetaknowledgeQuestions;
 import com.bayex.bayex.Bayex.BindingSymptomHypothesis;
@@ -13,7 +12,6 @@ import com.bayex.bayex.Bayex.Hypothesis;
 import com.bayex.bayex.Bayex.Symptom;
 import com.bayex.bayex.MainActivity;
 import com.bayex.bayex.Utils.Files;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

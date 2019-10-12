@@ -1,36 +1,61 @@
 package com.bayex.bayex.Bayex;
 
 import java.util.ArrayList;
+import java.math.BigDecimal;
 
 public class Test {
-    private ArrayList<String> pa = new ArrayList<>();
-    private ArrayList<ArrayList<String>> p1 = new ArrayList<>();
-    private ArrayList<ArrayList<String>> p2 = new ArrayList<>();
+    private ArrayList<BigDecimal> pa = new ArrayList<>();
+    private ArrayList<BigDecimal> p1 = new ArrayList<>();
+    private ArrayList<BigDecimal> p2 = new ArrayList<>();
+    private ArrayList<String> hipotesisName = new ArrayList<>();
 
     public Test(){}
 
-    public Test(ArrayList<String> pa, ArrayList<ArrayList<String>> p1, ArrayList<ArrayList<String>> p2)
+    public void setHM(ArrayList<String> p_name)
     {
-        this.pa = pa;
-        this.p1 = p1;
-        this.p2 = p2;
+        hipotesisName = p_name;
     }
 
-    public void setP1(ArrayList<ArrayList<String>> p1) {
-        this.p1 = p1;
+    public ArrayList<String> getHN()
+    {
+        return hipotesisName;
     }
 
-    public ArrayList<ArrayList<String>> getP1List(){ return p1; }
-
-    public void setP2 (ArrayList<ArrayList<String>> p2) {
-        this.p2 = p2;
+    public void setP1(ArrayList<String> p1) {
+        for(int i = 0; i < p1.size(); i++)
+        {
+            this.p1.add(new BigDecimal(p1.get(i)));
+        }
     }
 
-    public ArrayList<ArrayList<String>> getP2List() { return p2; }
+    public ArrayList<BigDecimal> getP1List(){ return p1; }
+
+    public void setP2 (ArrayList<String> p2) {
+        for(int i = 0; i < p2.size(); i++)
+        {
+            this.p2.add(new BigDecimal(p2.get(i)));
+        }
+    }
+
+    public ArrayList<BigDecimal> getP2List() { return p2; }
+
+    public void setSPa(String p_a)
+    {
+        pa.add(new BigDecimal(p_a));
+    }
+
+    public void setBPa(BigDecimal p)
+    {
+        this.pa.add(p);
+    }
 
     public void setPa (ArrayList<String> pa) {
-        this.pa = pa;
+        for(int i = 0; i < pa.size(); i++)
+        {
+            this.pa.add(new BigDecimal(pa.get(i)));
+        }
     }
 
-    public ArrayList<String> getPaList() { return pa; }
+    public ArrayList<BigDecimal> getPaList() { return pa; }
+
 }

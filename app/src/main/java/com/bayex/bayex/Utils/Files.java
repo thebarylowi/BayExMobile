@@ -189,23 +189,21 @@ public class Files {
         }
     }
 
-    private void readBindingsOfSymptomsAndHypothesis(BufferedReader br, ArrayList<BindingSymptomHypothesis> bsht) throws IOException {
+    private void readBindingsOfSymptomsAndHypothesis(BufferedReader br, BindingSymptomHypothesis bsht) throws IOException {
         br.readLine();
         String BindingOfHypothesisAndSymptomsCountString = readCRLFLine(br);
 
         for (int i = 0; i < Integer.parseInt(BindingOfHypothesisAndSymptomsCountString); i++){
-            BindingSymptomHypothesis temp = new BindingSymptomHypothesis();
             String localCount = readCRLFLine(br);
             for (int j = 0; j < Integer.parseInt(localCount); j++)
             {
                 String content = readCRLFLine(br);
                 String[] splittedContent = content.split("\t");
 
-                temp.setBindingSymptomHypothesisNumber(splittedContent[0]);
-                temp.setBindingSymptomHypothesisP1(splittedContent[1]);
-                temp.setBindingSymptomHypothesisP2(splittedContent[2]);
+                bsht.setBindingSymptomHypothesisNumber(splittedContent[0]);
+                bsht.setBindingSymptomHypothesisP1(splittedContent[1]);
+                bsht.setBindingSymptomHypothesisP2(splittedContent[2]);
             }
-            bsht.add(temp);
         }
     }
 
@@ -214,7 +212,7 @@ public class Files {
                                        ArrayList<Symptom> symptoms,
                                        ArrayList<GeneralSymptom> generalSymptoms,
                                        ArrayList<BindingsOfMetaknowledgeQuestions> bindingsOfMetawaysQuestions,
-                                       ArrayList<BindingSymptomHypothesis> bindingsOfSymptomsAndHypothesis) throws IOException {
+                                       BindingSymptomHypothesis bindingsOfSymptomsAndHypothesis) throws IOException {
 
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
 

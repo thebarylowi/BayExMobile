@@ -24,8 +24,7 @@ public class BayFilesDialog {
     private ArrayList<Symptom> symptomes = new ArrayList<>();
     private ArrayList<GeneralSymptom> generalSymptoms = new ArrayList<>();
     private ArrayList<BindingsOfMetaknowledgeQuestions> bindingsOfMetaknowledgeQuestions = new ArrayList<>();
-    private ArrayList<BindingSymptomHypothesis> BindingSymptomHypothesisTable = new ArrayList<>();
-
+    private BindingSymptomHypothesis BindingSymptomHypothesisTable = new BindingSymptomHypothesis();
     public static File baySelectedBase;
 
     public BayFilesDialog(final ArrayList<File> bayFileArray){
@@ -55,7 +54,7 @@ public class BayFilesDialog {
                 i.putParcelableArrayListExtra("hypo", hypotheses);
                 i.putParcelableArrayListExtra("symptoms",symptomes);
                 i.putParcelableArrayListExtra("general",generalSymptoms);
-                i.putParcelableArrayListExtra("bindings",BindingSymptomHypothesisTable);
+                i.putExtra("bindings",BindingSymptomHypothesisTable);// putParcelableExtra("bindings",BindingSymptomHypothesisTable);
                 MainActivity.mainActivity.startActivity(i);
             }
         });

@@ -27,7 +27,7 @@ public class    BaseSelectedActivity extends AppCompatActivity {
     private ArrayList<Hypothesis> hypotheses = new ArrayList<>();
     private ArrayList<Symptom> symptomes = new ArrayList<>();
     private ArrayList<GeneralSymptom> generalSymptoms = new ArrayList<>();
-    private ArrayList<BindingSymptomHypothesis> BindingSymptomHypothesisTable = new ArrayList<>();
+    private BindingSymptomHypothesis BindingSymptomHypothesisTable = new BindingSymptomHypothesis();
 
     public Files files;
     @Override
@@ -38,7 +38,7 @@ public class    BaseSelectedActivity extends AppCompatActivity {
         hypotheses = getIntent().getExtras().getParcelableArrayList("hypo");
         symptomes = getIntent().getParcelableArrayListExtra("symptoms");
         generalSymptoms = getIntent().getParcelableArrayListExtra("general");
-        BindingSymptomHypothesisTable = getIntent().getParcelableArrayListExtra("bindings");
+        BindingSymptomHypothesisTable = getIntent().getParcelableExtra("bindings");
 
         files = new Files();
         bShowBase = (Button) findViewById(R.id.bshowBase);
@@ -67,7 +67,7 @@ public class    BaseSelectedActivity extends AppCompatActivity {
                 i.putParcelableArrayListExtra("hypo", hypotheses);
                 i.putParcelableArrayListExtra("symptoms",symptomes);
                 i.putParcelableArrayListExtra("general",generalSymptoms);
-                i.putParcelableArrayListExtra("bindings",BindingSymptomHypothesisTable);
+                i.putExtra("bindings",BindingSymptomHypothesisTable);
                 startActivity(i);
             }
         });

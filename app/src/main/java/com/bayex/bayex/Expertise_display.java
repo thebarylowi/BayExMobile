@@ -81,10 +81,14 @@ public class Expertise_display extends AppCompatActivity {
         return symptomQuestIndex < symptoms.size();
     }
 
+    private  void handleYes(String p_question)
+    {
+        addAnswer(p_question, 4);
+    }
+
     private void handleYesAnswerToGeneralSymptom(String p_question)
     {
-        //TODO: handle click
-        addAnswer(p_question, 4);
+        addAnswer(p_question, 10);
     }
 
     private void handleRatherYesAnswerToGeneralSymptom(String p_question)
@@ -109,23 +113,112 @@ public class Expertise_display extends AppCompatActivity {
         addAnswer(p_question, 0);
     }
 
+    private void handleNo(String p_question)
+    {
+        addAnswer(p_question, 0);
+    }
 
-    private void handleNoMoreQuestions()
-    { //barylowi
+    private void po_odpowiedzi() {
+        for (int i = 0; i < answers.size(); i++) {
+            Answers local = answers.get(i);
+            int odp = local.getAnswer();
+            for (int j = 0; j < hypotheses.size(); j++)
+            {
+                BigDecimal p = test.getPaList().get(j);
+                BigDecimal py = test.getP1List().get(j);
+                BigDecimal pn = test.getP2List().get(j);
+                BigDecimal one = new BigDecimal("1");
+                BigDecimal res1 = one.subtract(p);
+                BigDecimal res2 = p.multiply(py);
+                BigDecimal res3 = res1.multiply(pn);
+                BigDecimal pe = res2.add(res3);
+                BigDecimal zero = new BigDecimal("0");
+
+                if (odp == 4)
+                {
+                        if (pe.compareTo(zero) == 1) {
+                            //barylowi tbp[i] *= py/pe
+                            BigDecimal div = py.divide(pe, 20, RoundingMode.HALF_UP);
+                            BigDecimal result = p.multiply(div);
+                            test.setBPa(j, result);
+                        }
+                }
+
+                if (odp == 3)
+                {
+                    if (pe.compareTo(zero) == 1) {
+                        // barylowi tbp[i] *= 0.5* (1-py)/(1-pe) +0.5
+                        BigDecimal half = new BigDecimal("0.5");
+                        BigDecimal resul1 = one.subtract(py);
+                        BigDecimal resul2 = half.multiply(resul1);
+                        BigDecimal resul3 = one.subtract(pe);
+                        BigDecimal div = resul2.divide(resul3, 19, RoundingMode.HALF_UP);
+                        BigDecimal result = div.add(half);
+                        test.setBPa(j, result);
+                    }
+                }
+
+                if (odp == 2)
+                {
+                    BigDecimal temp = test.getPaList().get(j);
+                    test.setBPa(j, temp);
+                }
+
+                if (odp == 1)
+                {
+                    if (pe.compareTo(one) == -1)
+                    {
+                        // barylowi: raczej_nie: tbp[i] *= 0.5* (1-py)/(1-pe) +0.5
+                        BigDecimal half = new BigDecimal("0.5");
+                        BigDecimal result1 = one.subtract(py);
+                        BigDecimal result2 = one.subtract(pe);
+                        BigDecimal result3 = half.multiply(result1).divide(result2, 19, RoundingMode.HALF_UP);
+                        BigDecimal result = result3.add(half);
+                        test.setBPa(j, result);
+                    }
+                }
+
+                if (odp == 0)
+                {
+                    //handle nie
+                    if (pe.compareTo(one) == -1)
+                    {
+                        // barylowi tbp[i] *= (1-py)/(1-pe)
+                        BigDecimal resu1 = one.subtract(py);
+                        BigDecimal resu2 = one.subtract(pe);
+                        BigDecimal resu3 = resu1.divide(resu2, 20, RoundingMode.HALF_UP);
+                        BigDecimal result = p.multiply(resu3);
+                        test.setBPa(j, result);
+                    }
+                }
+            }
+        }
+    }
+
+    private void handleNoMoreQuestions() {
+        bMaybeYea.setEnabled(false);
+        bMaybeNot.setEnabled(false);
+        bYea.setEnabled(false);
+        bNo.setEnabled(false);
+        bDontKnow.setEnabled(false);
+
+        po_odpowiedzi();
         ArrayList<BigDecimal> changed = test.getResult();
         ArrayList<String> names = test.getHN();
 
-        if (changed.size() > 0 && names.size() > 0) {
+        if (changed.size() > 0)
+        {
             BigDecimal result = changed.get(0);
-            String name = new String();
+            String name = names.get(0);
 
-            for (int i = 0; i < changed.size(); i++) {
-                if (result.compareTo(changed.get(i)) == -1) {
+            for (int i = 0; i < changed.size(); i++){
+                if (result.compareTo(changed.get(i)) == -1)
+                {
                     result = changed.get(i);
                     name = names.get(i);
                 }
             }
-            Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "Hypothesis: " + name, Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "result: " + name, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -214,39 +307,15 @@ public class Expertise_display extends AppCompatActivity {
             public void onClick(View v) {
                 if (generalSymptoms.size() != 0 && validateIfAnyGeneralSymptomsQuestionsLeft())
                 {
-                    //TODO: try to modify algorithm to wait with metaknowleage questions until they are needed
-                    //TODO: determine how to modify apriori on YES click
-
                     String l_question = generalSymptoms.get(generalQuestIndex).getGeneralSymptomQuestion();
                     displayGeneralSymptomQuestion(l_question);
                     handleYesAnswerToGeneralSymptom(l_question);
                     index++;
                 }
                 else if (symptoms.size() != 0 && validateIfAnySymptomsQuestionsLeft()){
-                    //TODO: determine how to choose next question
-                    //TODO: determine how to modify apriori on YES click
-
                     String l_question = symptoms.get(symptomQuestIndex).getQuestion();
                     displaySymptomQuestion();
-                    handleYesAnswerToGeneralSymptom(l_question);
-
-                    // liczenie prawdopodobienstwa dla hipotezy zwiazanej z danym pytaniem
-                    BigDecimal p = test.getPaList().get(index);
-                    // TODO: get p1/p2 but first change it to BigDecimal type
-                    BigDecimal py = test.getP1List().get(index);
-                    BigDecimal pn = test.getP2List().get(index);
-                    BigDecimal one = new BigDecimal("1");
-                    BigDecimal res1 = one.subtract(p);
-                    BigDecimal pe = p.multiply(py).add(res1).multiply(pn);
-                    BigDecimal zero = new BigDecimal("0");
-                   if (pe.compareTo(zero) == 1)
-                   {
-                       //barylowi tbp[i] *= py/pe
-                       BigDecimal div = py.divide(pe, 19, RoundingMode.HALF_UP);
-                       BigDecimal result = p.multiply(div);
-                       test.setBPa(result);
-//                       Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "result: " + result, Toast.LENGTH_SHORT).show();
-                    }
+                    handleYes(l_question);
                     index++;
                 }
                 else
@@ -256,13 +325,10 @@ public class Expertise_display extends AppCompatActivity {
             }
         });
 
-        //for now only yes button implementation
         bNo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (generalSymptoms.size() != 0 && validateIfAnyGeneralSymptomsQuestionsLeft())
                 {
-                    //TODO: try to modify algorithm to wait with metaknowleage questions until they are needed
-                    //TODO: determine how to modify apriori on No click
                     String l_question = generalSymptoms.get(generalQuestIndex).getGeneralSymptomQuestion();
                     displayGeneralSymptomQuestion(l_question);
                     handleNoAnswerToGeneralSymptom(l_question);
@@ -273,26 +339,7 @@ public class Expertise_display extends AppCompatActivity {
                     //TODO: determine how to modify apriori on YES click
                     String l_question = symptoms.get(symptomQuestIndex).getQuestion();
                     displaySymptomQuestion();
-                    handleNoAnswerToGeneralSymptom(l_question);
-
-                    BigDecimal p = test.getPaList().get(index);
-                    BigDecimal py = test.getP1List().get(index);
-                    BigDecimal pn = test.getP2List().get(index);
-                    BigDecimal one = new BigDecimal("1");
-                    BigDecimal res1 = one.subtract(p);
-                    BigDecimal pe = p.multiply(py).add(res1).multiply(pn);
-
-                    if (pe.compareTo(one) == -1)
-                    {
-                        // barylowi tbp[i] *= (1-py)/(1-pe)
-                        BigDecimal resu1 = one.subtract(py);
-                        BigDecimal resu2 = one.subtract(pe);
-                        BigDecimal resu3 = resu1.divide(resu2, 19, RoundingMode.HALF_UP);
-                        BigDecimal result = p.multiply(resu3);
-                        test.setBPa(result);
-//                        Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "result: " + result, Toast.LENGTH_SHORT).show();
-                    }
-
+                    handleNo(l_question);
                     index++;
                 }
                 else
@@ -311,27 +358,27 @@ public class Expertise_display extends AppCompatActivity {
                      displaySymptomQuestion();
                      handleRatherYesAnswerToGeneralSymptom(l_question);
 
-                     //barylowi - why app is terminated on last q???
-                     BigDecimal p = test.getPaList().get(index);
-                     BigDecimal py = test.getP1List().get(index);
-                     BigDecimal pn = test.getP2List().get(index);
-                     BigDecimal one = new BigDecimal("1");
-                     BigDecimal zero = new BigDecimal("0");
-                     BigDecimal res1 = one.subtract(p);
-                     BigDecimal pe = p.multiply(py).add(res1).multiply(pn);
-
-                     if (pe.compareTo(zero) == 1)
-                     {
-                         // barylowi tbp[i] *= 0.5* (1-py)/(1-pe) +0.5
-                         BigDecimal half = new BigDecimal("0.5");
-                         BigDecimal resul1 = one.subtract(py);
-                         BigDecimal resul2 = half.multiply(resul1);
-                         BigDecimal resul3 = one.subtract(pe);
-                         BigDecimal div = resul2.divide(resul3, 19, RoundingMode.HALF_UP);
-                         BigDecimal result = div.add(half);
-                         test.setBPa(result);
-//                         Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "result: " + result, Toast.LENGTH_SHORT).show();
-                     }
+//                     //barylowi - why app is terminated on last q???
+//                     BigDecimal p = test.getPaList().get(index);
+//                     BigDecimal py = test.getP1List().get(index);
+//                     BigDecimal pn = test.getP2List().get(index);
+//                     BigDecimal one = new BigDecimal("1");
+//                     BigDecimal zero = new BigDecimal("0");
+//                     BigDecimal res1 = one.subtract(p);
+//                     BigDecimal pe = p.multiply(py).add(res1).multiply(pn);
+//
+//                     if (pe.compareTo(zero) == 1)
+//                     {
+//                         // barylowi tbp[i] *= 0.5* (1-py)/(1-pe) +0.5
+//                         BigDecimal half = new BigDecimal("0.5");
+//                         BigDecimal resul1 = one.subtract(py);
+//                         BigDecimal resul2 = half.multiply(resul1);
+//                         BigDecimal resul3 = one.subtract(pe);
+//                         BigDecimal div = resul2.divide(resul3, 19, RoundingMode.HALF_UP);
+//                         BigDecimal result = div.add(half);
+//                         test.setBPa(result);
+////                         Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "result: " + result, Toast.LENGTH_SHORT).show();
+//                     }
                      index++;
                 }
                  else
@@ -344,31 +391,31 @@ public class Expertise_display extends AppCompatActivity {
         bMaybeNot.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (symptoms.size() != 0 && validateIfAnySymptomsQuestionsLeft()){
-                    //TODO: determine how to choose next question
-                    //TODO: determine how to modify apriori on YES click
+//                    //TODO: determine how to choose next question
+//                    //TODO: determine how to modify apriori on YES click
                     String l_question = symptoms.get(symptomQuestIndex).getQuestion();
                     displaySymptomQuestion();
                     handleRatherNoAnswerToGeneralSymptom(l_question);
-
-                    //barylowi
-                    BigDecimal p = test.getPaList().get(index);
-                    BigDecimal py = test.getP1List().get(index);
-                    BigDecimal pn = test.getP2List().get(index);
-                    BigDecimal one = new BigDecimal("1");
-                    BigDecimal res1 = one.subtract(p);
-                    BigDecimal pe = p.multiply(py).add(res1).multiply(pn);
-
-                    if (pe.compareTo(one) == -1)
-                    {
-                        // barylowi: raczej_nie: tbp[i] *= 0.5* (1-py)/(1-pe) +0.5
-                        BigDecimal half = new BigDecimal("0.5");
-                        BigDecimal result1 = one.subtract(py);
-                        BigDecimal result2 = one.subtract(pe);
-                        BigDecimal result3 = half.multiply(result1).divide(result2, 19, RoundingMode.HALF_UP);
-                        BigDecimal result = result3.add(half);
-                        test.setBPa(result);
-//                        Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "result: " + result, Toast.LENGTH_SHORT).show();
-                    }
+//
+//                    //barylowi
+//                    BigDecimal p = test.getPaList().get(index);
+//                    BigDecimal py = test.getP1List().get(index);
+//                    BigDecimal pn = test.getP2List().get(index);
+//                    BigDecimal one = new BigDecimal("1");
+//                    BigDecimal res1 = one.subtract(p);
+//                    BigDecimal pe = p.multiply(py).add(res1).multiply(pn);
+//
+//                    if (pe.compareTo(one) == -1)
+//                    {
+//                        // barylowi: raczej_nie: tbp[i] *= 0.5* (1-py)/(1-pe) +0.5
+//                        BigDecimal half = new BigDecimal("0.5");
+//                        BigDecimal result1 = one.subtract(py);
+//                        BigDecimal result2 = one.subtract(pe);
+//                        BigDecimal result3 = half.multiply(result1).divide(result2, 19, RoundingMode.HALF_UP);
+//                        BigDecimal result = result3.add(half);
+//                        test.setBPa(result);
+////                        Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "result: " + result, Toast.LENGTH_SHORT).show();
+//                    }
 
                     index++;
                 }

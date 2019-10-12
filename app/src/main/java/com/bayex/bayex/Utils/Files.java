@@ -111,7 +111,7 @@ public class Files {
         br.readLine();
         String hypothesisCountString = readCRLFLine(br);
         String hypothesisCount[] = hypothesisCountString.split("\t");
-        Toast.makeText(MainActivity.mainActivity.getApplicationContext(), hypothesisCount[0], Toast.LENGTH_LONG).show();
+        //Toast.makeText(MainActivity.mainActivity.getApplicationContext(), hypothesisCount[0], Toast.LENGTH_LONG).show();
 
         for (int i = 0; i < Integer.parseInt(hypothesisCount[0]); i++) {
             String temp = readCRLFLine(br);

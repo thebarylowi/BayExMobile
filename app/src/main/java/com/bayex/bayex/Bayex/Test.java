@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 public class Test {
     private ArrayList<BigDecimal> pa = new ArrayList<>();
     private ArrayList<BigDecimal> result = new ArrayList<>();
+
     private ArrayList<BigDecimal> p1 = new ArrayList<>();
     private ArrayList<BigDecimal> p2 = new ArrayList<>();
     private ArrayList<String> hipotesisName = new ArrayList<>();
@@ -45,14 +46,20 @@ public class Test {
         pa.add(new BigDecimal(p_a));
     }
 
-    public void setBPa(BigDecimal p)
+    public void setBPa(int index, BigDecimal p)
     {
-        this.result.add(p);
+        if(result.size() < pa.size())
+        {
+            this.result.add(p);
+        }
+        else {
+            this.result.set(index, p);
+        }
     }
 
     public ArrayList<BigDecimal> getResult()
     {
-        return result;
+        return  result;
     }
 
     public void setPa (ArrayList<String> pa) {

@@ -111,22 +111,22 @@ public class Expertise_display extends AppCompatActivity {
 
 
     private void handleNoMoreQuestions()
-    {
-        ArrayList<BigDecimal> changed = test.getPaList();
+    { //barylowi
+        ArrayList<BigDecimal> changed = test.getResult();
         ArrayList<String> names = test.getHN();
 
-        BigDecimal result = changed.get(0);
-        String name = new String();
+        if (changed.size() > 0 && names.size() > 0) {
+            BigDecimal result = changed.get(0);
+            String name = new String();
 
-        for (int i = 0; i < changed.size(); i++)
-        {
-            if(result.compareTo(changed.get(i)) == -1)
-            {
-                result = changed.get(i);
-                name = names.get(i);
+            for (int i = 0; i < changed.size(); i++) {
+                if (result.compareTo(changed.get(i)) == -1) {
+                    result = changed.get(i);
+                    name = names.get(i);
+                }
             }
+            Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "Hypothesis: " + name, Toast.LENGTH_LONG).show();
         }
-        Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "Hypothesis: " + name, Toast.LENGTH_LONG).show();
     }
 
     private void initTestObject()

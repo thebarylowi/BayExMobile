@@ -127,18 +127,20 @@ public class Expertise_display extends AppCompatActivity {
                 BigDecimal p = test.getPaList().get(j);
                 BigDecimal py = test.getP1List().get(j);
                 BigDecimal pn = test.getP2List().get(j);
-                BigDecimal one = new BigDecimal("1");
+                BigDecimal one = new BigDecimal("1.0");
+
                 BigDecimal res1 = one.subtract(p);
                 BigDecimal res2 = p.multiply(py);
                 BigDecimal res3 = res1.multiply(pn);
                 BigDecimal pe = res2.add(res3);
-                BigDecimal zero = new BigDecimal("0");
+                BigDecimal zero = new BigDecimal("0.0");
 
                 if (odp == 4)
                 {
+                    Log.d("barylowi", "tak");
                         if (pe.compareTo(zero) == 1) {
                             //barylowi tbp[i] *= py/pe
-                            BigDecimal div = py.divide(pe, 20, RoundingMode.HALF_UP);
+                            BigDecimal div = py.divide(pe, 22, RoundingMode.HALF_UP);
                             BigDecimal result = p.multiply(div);
                             test.setBPa(j, result);
                         }
@@ -147,13 +149,12 @@ public class Expertise_display extends AppCompatActivity {
                 if (odp == 3)
                 {
                     if (pe.compareTo(zero) == 1) {
-                        // barylowi tbp[i] *= 0.5* (1-py)/(1-pe) +0.5
+                        // barylowi tbp[i] *= 0.5* (py/pe) +0.5
                         BigDecimal half = new BigDecimal("0.5");
-                        BigDecimal resul1 = one.subtract(py);
-                        BigDecimal resul2 = half.multiply(resul1);
-                        BigDecimal resul3 = one.subtract(pe);
-                        BigDecimal div = resul2.divide(resul3, 19, RoundingMode.HALF_UP);
-                        BigDecimal result = div.add(half);
+                        BigDecimal resul2 = py.divide(pe, 22, RoundingMode.HALF_UP);
+                        BigDecimal resul3 = half.multiply(resul2);
+                        BigDecimal result1 = resul3.add(half);
+                        BigDecimal result = p.multiply(result1);
                         test.setBPa(j, result);
                     }
                 }
@@ -172,8 +173,10 @@ public class Expertise_display extends AppCompatActivity {
                         BigDecimal half = new BigDecimal("0.5");
                         BigDecimal result1 = one.subtract(py);
                         BigDecimal result2 = one.subtract(pe);
-                        BigDecimal result3 = half.multiply(result1).divide(result2, 19, RoundingMode.HALF_UP);
-                        BigDecimal result = result3.add(half);
+                        BigDecimal multi = half.multiply(result1);
+                        BigDecimal div = multi.divide(result2, 22, RoundingMode.HALF_UP);
+                        BigDecimal result3 = div.add(half);
+                        BigDecimal result = p.multiply(result3);
                         test.setBPa(j, result);
                     }
                 }
@@ -186,7 +189,7 @@ public class Expertise_display extends AppCompatActivity {
                         // barylowi tbp[i] *= (1-py)/(1-pe)
                         BigDecimal resu1 = one.subtract(py);
                         BigDecimal resu2 = one.subtract(pe);
-                        BigDecimal resu3 = resu1.divide(resu2, 20, RoundingMode.HALF_UP);
+                        BigDecimal resu3 = resu1.divide(resu2, 22, RoundingMode.HALF_UP);
                         BigDecimal result = p.multiply(resu3);
                         test.setBPa(j, result);
                     }
@@ -218,7 +221,7 @@ public class Expertise_display extends AppCompatActivity {
                     name = names.get(i);
                 }
             }
-            Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "result: " + name, Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "result: " + name + ", val: " + result, Toast.LENGTH_LONG).show();
         }
     }
 

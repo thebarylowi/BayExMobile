@@ -46,16 +46,16 @@ public class Test {
         pa.add(new BigDecimal(p_a));
     }
 
-    public void setBPa(int index, BigDecimal p)
+    public void setResult(int index, BigDecimal p)
     {
-        if(result.size() < pa.size())
-        {
-            this.result.add(p);
+//        if(result.size() < pa.size())
+//        {
+//            this.pa.add(p);
+//        }
+//        else {
+            this.pa.set(index, p);
         }
-        else {
-            this.result.set(index, p);
-        }
-    }
+//    }
 
     public ArrayList<BigDecimal> getResult()
     {

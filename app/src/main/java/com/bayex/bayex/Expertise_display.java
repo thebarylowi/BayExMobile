@@ -137,13 +137,12 @@ public class Expertise_display extends AppCompatActivity {
 
                 if (odp == 4)
                 {
-                    Log.d("barylowi", "tak");
-                        if (pe.compareTo(zero) == 1) {
-                            //barylowi tbp[i] *= py/pe
-                            BigDecimal div = py.divide(pe, 22, RoundingMode.HALF_UP);
-                            BigDecimal result = p.multiply(div);
-                            test.setBPa(j, result);
-                        }
+                    if (pe.compareTo(zero) == 1) {
+                        //barylowi tbp[i] *= py/pe
+                        BigDecimal div = py.divide(pe, 22, RoundingMode.HALF_UP);
+                        BigDecimal result = p.multiply(div);
+                        test.setResult(j, result);
+                    }
                 }
 
                 if (odp == 3)
@@ -155,14 +154,8 @@ public class Expertise_display extends AppCompatActivity {
                         BigDecimal resul3 = half.multiply(resul2);
                         BigDecimal result1 = resul3.add(half);
                         BigDecimal result = p.multiply(result1);
-                        test.setBPa(j, result);
+                        test.setResult(j, result);
                     }
-                }
-
-                if (odp == 2)
-                {
-                    BigDecimal temp = test.getPaList().get(j);
-                    test.setBPa(j, temp);
                 }
 
                 if (odp == 1)
@@ -177,7 +170,7 @@ public class Expertise_display extends AppCompatActivity {
                         BigDecimal div = multi.divide(result2, 22, RoundingMode.HALF_UP);
                         BigDecimal result3 = div.add(half);
                         BigDecimal result = p.multiply(result3);
-                        test.setBPa(j, result);
+                        test.setResult(j, result);
                     }
                 }
 
@@ -191,7 +184,7 @@ public class Expertise_display extends AppCompatActivity {
                         BigDecimal resu2 = one.subtract(pe);
                         BigDecimal resu3 = resu1.divide(resu2, 22, RoundingMode.HALF_UP);
                         BigDecimal result = p.multiply(resu3);
-                        test.setBPa(j, result);
+                        test.setResult(j, result);
                     }
                 }
             }
@@ -206,7 +199,7 @@ public class Expertise_display extends AppCompatActivity {
         bDontKnow.setEnabled(false);
 
         po_odpowiedzi();
-        ArrayList<BigDecimal> changed = test.getResult();
+        ArrayList<BigDecimal> changed = test.getPaList();
         ArrayList<String> names = test.getHN();
 
         if (changed.size() > 0)
@@ -360,28 +353,6 @@ public class Expertise_display extends AppCompatActivity {
                      String l_question = symptoms.get(symptomQuestIndex).getQuestion();
                      displaySymptomQuestion();
                      handleRatherYesAnswerToGeneralSymptom(l_question);
-
-//                     //barylowi - why app is terminated on last q???
-//                     BigDecimal p = test.getPaList().get(index);
-//                     BigDecimal py = test.getP1List().get(index);
-//                     BigDecimal pn = test.getP2List().get(index);
-//                     BigDecimal one = new BigDecimal("1");
-//                     BigDecimal zero = new BigDecimal("0");
-//                     BigDecimal res1 = one.subtract(p);
-//                     BigDecimal pe = p.multiply(py).add(res1).multiply(pn);
-//
-//                     if (pe.compareTo(zero) == 1)
-//                     {
-//                         // barylowi tbp[i] *= 0.5* (1-py)/(1-pe) +0.5
-//                         BigDecimal half = new BigDecimal("0.5");
-//                         BigDecimal resul1 = one.subtract(py);
-//                         BigDecimal resul2 = half.multiply(resul1);
-//                         BigDecimal resul3 = one.subtract(pe);
-//                         BigDecimal div = resul2.divide(resul3, 19, RoundingMode.HALF_UP);
-//                         BigDecimal result = div.add(half);
-//                         test.setBPa(result);
-////                         Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "result: " + result, Toast.LENGTH_SHORT).show();
-//                     }
                      index++;
                 }
                  else
@@ -399,27 +370,6 @@ public class Expertise_display extends AppCompatActivity {
                     String l_question = symptoms.get(symptomQuestIndex).getQuestion();
                     displaySymptomQuestion();
                     handleRatherNoAnswerToGeneralSymptom(l_question);
-//
-//                    //barylowi
-//                    BigDecimal p = test.getPaList().get(index);
-//                    BigDecimal py = test.getP1List().get(index);
-//                    BigDecimal pn = test.getP2List().get(index);
-//                    BigDecimal one = new BigDecimal("1");
-//                    BigDecimal res1 = one.subtract(p);
-//                    BigDecimal pe = p.multiply(py).add(res1).multiply(pn);
-//
-//                    if (pe.compareTo(one) == -1)
-//                    {
-//                        // barylowi: raczej_nie: tbp[i] *= 0.5* (1-py)/(1-pe) +0.5
-//                        BigDecimal half = new BigDecimal("0.5");
-//                        BigDecimal result1 = one.subtract(py);
-//                        BigDecimal result2 = one.subtract(pe);
-//                        BigDecimal result3 = half.multiply(result1).divide(result2, 19, RoundingMode.HALF_UP);
-//                        BigDecimal result = result3.add(half);
-//                        test.setBPa(result);
-////                        Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "result: " + result, Toast.LENGTH_SHORT).show();
-//                    }
-
                     index++;
                 }
                 else

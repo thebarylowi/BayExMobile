@@ -7,12 +7,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bayex.bayex.Bayex.BindingSymptomHypothesis;
 import com.bayex.bayex.Bayex.Symptom;
 import java.util.ArrayList;
 
 public class SymptomsDisplay extends AppCompatActivity {
 
     private ArrayList<Symptom> symptomes = new ArrayList<>();
+    private BindingSymptomHypothesis BindingSymptomHypothesisTable = new BindingSymptomHypothesis();
     private int INDEX = 0;
 
     private TextView tvSymptomName;
@@ -25,6 +28,7 @@ public class SymptomsDisplay extends AppCompatActivity {
         setContentView(R.layout.activity_symptoms_display);
 
         symptomes = getIntent().getParcelableArrayListExtra("symptoms");
+        BindingSymptomHypothesisTable = getIntent().getParcelableExtra("bindings");
 
         tvSymptomName = (TextView) findViewById(R.id.textSymptomName);
         tvSymptomQuestion = (TextView) findViewById(R.id.textQuestion);

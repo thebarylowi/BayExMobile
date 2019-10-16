@@ -30,5 +30,6 @@
         <activity android:name=".Expertise_display" />
         <activity android:name=".MetawaysDisplay" />
         <activity android:name="com.bayex.bayex.Expertise_display$ShowAnswers"/>
+        <activity android:name=".Expertise_display$ShowResult" />
     </application>
 </manifest>

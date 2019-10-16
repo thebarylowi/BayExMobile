@@ -6,23 +6,69 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 
 public class BindingSymptomHypothesis implements Parcelable {
-    private ArrayList<String> m_number = new ArrayList<>();
+    private ArrayList<String> m_number = new ArrayList<>(); // lista nazw hipotez -> index od 0 - n odpowiada koljenosci wczytania pytan!!
     private ArrayList<String> p1 = new ArrayList<>();
     private ArrayList<String> p2 = new ArrayList<>();
 
+    private ArrayList<ArrayList<String>> names = new ArrayList<>();
+    private ArrayList<ArrayList<String>> l_p1 = new ArrayList<>();
+    private ArrayList<ArrayList<String>> l_p2 = new ArrayList<>();
+
+
     public BindingSymptomHypothesis(){}
-    public BindingSymptomHypothesis(ArrayList<String> number, ArrayList<String> p_p1, ArrayList<String> p_p2)
-    {
-        m_number = number;
-        p1 = p_p1;
-        p2 = p_p2;
-    }
 
     public BindingSymptomHypothesis(Parcel in)
     {
         in.readStringList(m_number);
         in.readStringList(p1);
         in.readStringList(p2);
+
+        in.readList(names, ArrayList.class.getClassLoader());
+        in.readList(l_p1, ArrayList.class.getClassLoader());
+        in.readList(l_p2, ArrayList.class.getClassLoader());
+    }
+
+    public void setP2s(ArrayList<ArrayList<String>> p2)
+    {
+        this.l_p2 = p2;
+    }
+
+    public void setP1s(ArrayList<ArrayList<String>> p1)
+    {
+        this.l_p1 = p1;
+    }
+
+    public void set_p2_list(ArrayList<String> p_p2List)
+    {
+        this.l_p2.add(p_p2List);
+    }
+
+    public ArrayList<ArrayList<String>> get_p2_list() {
+        return l_p2;
+    }
+
+    public void set_p1_list(ArrayList<String> p_p1List)
+    {
+        this.l_p1.add(p_p1List);
+    }
+
+    public ArrayList<ArrayList<String>> get_p1_list() {
+        return l_p1;
+    }
+
+    public void set_names_list(ArrayList<String> p_list)
+    {
+        this.names.add(p_list);
+    }
+
+    public ArrayList<ArrayList<String>> get_names_list()
+    {
+            return names;
+    }
+
+    public void setNames(ArrayList<ArrayList<String>> names)
+    {
+        this.names = names;
     }
 
     public void setBindingSymptomHypothesisNumber(String p_number) { m_number.add(p_number); }
@@ -42,6 +88,10 @@ public class BindingSymptomHypothesis implements Parcelable {
         dest.writeStringList(m_number);
         dest.writeStringList(p1);
         dest.writeStringList(p2);
+
+        dest.writeList(names);
+        dest.writeList(l_p1);
+        dest.writeList(l_p2);
     }
 
     public static final Parcelable.Creator<BindingSymptomHypothesis> CREATOR = new Parcelable.Creator<BindingSymptomHypothesis>()

@@ -7,6 +7,7 @@ public class Symptom implements Parcelable {
     private String m_name;
     private String m_question;
     private String m_description;
+    private boolean m_isAnswered = false;
 
     public Symptom(){}
 
@@ -17,11 +18,22 @@ public class Symptom implements Parcelable {
         m_description = description;
     }
 
+    public boolean isAnswered()
+    {
+        return m_isAnswered;
+    }
+
+    public void setIsAnswered(boolean p_flag)
+    {
+        m_isAnswered = p_flag;
+    }
+
     public Symptom(Parcel in)
     {
         m_name = in.readString();
         m_question = in.readString();
         m_description = in.readString();
+        m_isAnswered = in.readInt() == 1;
     }
 
     public void setSymptomName(String p_name) { m_name = p_name; }
@@ -41,6 +53,7 @@ public class Symptom implements Parcelable {
         dest.writeString(m_name);
         dest.writeString(m_question);
         dest.writeString(m_description);
+        dest.writeInt(m_isAnswered ? 1 : 0);
     }
 
     public static final Parcelable.Creator<Symptom> CREATOR = new Parcelable.Creator<Symptom>()

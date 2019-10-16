@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.bayex.bayex.Bayex.BindingSymptomHypothesis;
 import com.bayex.bayex.Bayex.GeneralSymptom;
 import com.bayex.bayex.Bayex.Hypothesis;
 import com.bayex.bayex.Bayex.Symptom;
@@ -21,6 +23,7 @@ public class ShowBaseActivity extends AppCompatActivity {
     private ArrayList<Hypothesis> hypotheses = new ArrayList<>();
     private ArrayList<Symptom> symptomes = new ArrayList<>();
     private ArrayList<GeneralSymptom> generalSymptoms = new ArrayList<>();
+    private BindingSymptomHypothesis BindingSymptomHypothesisTable = new BindingSymptomHypothesis();
 
 
     @Override
@@ -31,6 +34,7 @@ public class ShowBaseActivity extends AppCompatActivity {
         hypotheses = getIntent().getParcelableArrayListExtra("hypo");
         symptomes = getIntent().getParcelableArrayListExtra("symptoms");
         generalSymptoms = getIntent().getParcelableArrayListExtra("general");
+        BindingSymptomHypothesisTable = getIntent().getParcelableExtra("bindings");
 
         bHipotesis = (Button) findViewById(R.id.bHipotesis);
         bSymptoms = (Button) findViewById(R.id.bSymptoms);
@@ -56,6 +60,7 @@ public class ShowBaseActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.mainActivity, SymptomsDisplay.class);
                 i.putParcelableArrayListExtra("symptoms", symptomes);
+                i.putExtra("bindings", BindingSymptomHypothesisTable);
                 startActivity(i);
 
                 //placeHolder.setVisibility(View.INVISIBLE);

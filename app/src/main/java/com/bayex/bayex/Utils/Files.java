@@ -123,7 +123,7 @@ public class Files {
                 if (hypothesis.length == 5) {
                     hypothesisDescription = hypothesis[4];
                 }
-                h.add(new Hypothesis(hypothesisName, hypothesisDescription, hypothesisProbability));
+                    h.add(new Hypothesis(hypothesisName, hypothesisDescription, hypothesisProbability));
             }
         }
     }
@@ -195,15 +195,27 @@ public class Files {
 
         for (int i = 0; i < Integer.parseInt(BindingOfHypothesisAndSymptomsCountString); i++){
             String localCount = readCRLFLine(br);
+            ArrayList<String> l_names = new ArrayList<>();
+            ArrayList<String> l_p1_list = new ArrayList<>();
+            ArrayList<String> l_p2_list = new ArrayList<>();
+
             for (int j = 0; j < Integer.parseInt(localCount); j++)
             {
                 String content = readCRLFLine(br);
                 String[] splittedContent = content.split("\t");
 
+                l_names.add(splittedContent[0]);
+                l_p1_list.add(splittedContent[1]);
+                l_p2_list.add(splittedContent[2]);
+
                 bsht.setBindingSymptomHypothesisNumber(splittedContent[0]);
                 bsht.setBindingSymptomHypothesisP1(splittedContent[1]);
                 bsht.setBindingSymptomHypothesisP2(splittedContent[2]);
             }
+
+            bsht.set_names_list(l_names);
+            bsht.set_p1_list(l_p1_list);
+            bsht.set_p2_list(l_p2_list);
         }
     }
 

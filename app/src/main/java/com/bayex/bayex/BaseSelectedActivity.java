@@ -56,6 +56,7 @@ public class    BaseSelectedActivity extends AppCompatActivity {
                 i.putParcelableArrayListExtra("hypo", hypotheses);
                 i.putParcelableArrayListExtra("symptoms",symptomes);
                 i.putParcelableArrayListExtra("general",generalSymptoms);
+                i.putExtra("bindings",BindingSymptomHypothesisTable);
                 startActivity(i);
             }
         });

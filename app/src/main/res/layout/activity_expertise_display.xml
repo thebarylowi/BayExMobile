@@ -53,10 +53,10 @@
         android:text="chyba nie"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.947"
+        app:layout_constraintHorizontal_bias="0.271"
         app:layout_constraintStart_toEndOf="@+id/bDontKnow"
         app:layout_constraintTop_toBottomOf="@+id/bMaybeYea"
-        app:layout_constraintVertical_bias="0.43" />
+        app:layout_constraintVertical_bias="0.365" />
 
     <TextView
         android:id="@+id/tQuestion"
@@ -82,9 +82,10 @@
         android:text="Nie wiem"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/bMaybeYea"
-        app:layout_constraintHorizontal_bias="0.638"
+        app:layout_constraintHorizontal_bias="0.297"
         app:layout_constraintStart_toEndOf="@+id/bNo"
-        app:layout_constraintTop_toBottomOf="@+id/tQuestion" />
+        app:layout_constraintTop_toBottomOf="@+id/tQuestion"
+        app:layout_constraintVertical_bias="0.341" />
 
     <Button
         android:id="@+id/bShowAnswers"
@@ -101,4 +102,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/bShowResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wynik"
+        app:layout_constraintBottom_toTopOf="@+id/tQuestion"
+        app:layout_constraintEnd_toStartOf="@+id/bShowAnswers"
+        app:layout_constraintHorizontal_bias="0.153"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.4" />
 </android.support.constraint.ConstraintLayout>

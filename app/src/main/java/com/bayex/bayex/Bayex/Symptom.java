@@ -9,8 +9,6 @@ public class Symptom implements Parcelable {
     private String m_description;
     private boolean m_isAnswered = false;
 
-    public Symptom(){}
-
     public Symptom(String name, String question, String description)
     {
         m_name = name;

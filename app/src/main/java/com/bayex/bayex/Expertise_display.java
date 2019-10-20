@@ -11,31 +11,20 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.bayex.bayex.Bayex.Answers;
 import com.bayex.bayex.Bayex.BindingSymptomHypothesis;
-import com.bayex.bayex.Bayex.GeneralSymptom;
 import com.bayex.bayex.Bayex.Hypothesis;
 import com.bayex.bayex.Bayex.Symptom;
 import com.bayex.bayex.Bayex.Test;
-
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.TreeMap;
-
-//TODO: piori calculation handle
 
 public class Expertise_display extends AppCompatActivity {
 
     private ArrayList<Hypothesis> hypotheses = new ArrayList<>();
     private ArrayList<Symptom> symptoms = new ArrayList<>();
-    //private ArrayList<GeneralSymptom> generalSymptoms = new ArrayList<>();
     private BindingSymptomHypothesis BindingSymptomHypothesisTable = new BindingSymptomHypothesis();
-
     private Test test = new Test();
-
     private ArrayList<Answers> answers = new ArrayList<>();
 
     private Button bYea;
@@ -44,7 +33,6 @@ public class Expertise_display extends AppCompatActivity {
     private Button bMaybeNot;
     private Button bDontKnow;
     private Button bShowReult;
-
     private Button bShowAnswers;
 
     private int generalQuestIndex = 0;
@@ -68,137 +56,152 @@ public class Expertise_display extends AppCompatActivity {
         bQuest.setText(String.valueOf(symptoms.get(symptomQuestIndex).getQuestion()));
     }
 
-    private void displayGeneralSymptomQuestion(String p_question)
-    {
-        bMaybeYea.setEnabled(false);
-        bMaybeNot.setEnabled(false);
-        bQuest.setText(String.valueOf(p_question));
-    }
-
-//    private boolean validateIfAnyGeneralSymptomsQuestionsLeft()
-//    {
-//        return generalQuestIndex < generalSymptoms.size();
-//    }
-
     private boolean validateIfAnySymptomsQuestionsLeft()
     {
         return symptomQuestIndex < symptoms.size();
     }
 
-    private  void handleYes(String p_question, String p_name)
+    private void computeDiagnosticValue()
     {
-        addAnswer(p_question, p_name, 4);
-    }
+        ArrayList<BigDecimal> diagnosticValues = new ArrayList<>();
+        BigDecimal max = new BigDecimal("-1.0");
 
-//    private void handleYesAnswerToGeneralSymptom(String p_question)
-//    {
-//        addAnswer(p_question, "", 10);
-//    }
+        // TODO: dodac if ktory sprawdzi czy symptom juz nie byl brany pod uwage - konieczne jest dodanie pola isAnswered do klasy
 
-    private void handleRatherYesAnswerToGeneralSymptom(String p_question)
+        for(int i = 0; i < BindingSymptomHypothesisTable.getSymptomNames().size(); i++)
+        {
+            diagnosticValues.add(new BigDecimal("0.0"));
+        }
+
+        for(int i = 0; i < hypotheses.size(); i++)
+        {
+            BigDecimal p = new BigDecimal(hypotheses.get(i).getHypothseisProbability());
+            for(int j = 0; j < BindingSymptomHypothesisTable.getSymptomNames().size(); j++) {
+                BigDecimal py = new BigDecimal(BindingSymptomHypothesisTable.get_p1_list().get(j).get(i));
+                BigDecimal pn = new BigDecimal(BindingSymptomHypothesisTable.get_p2_list().get(j).get(i));
+                BigDecimal pe = new BigDecimal("0.0");
+                BigDecimal one = new BigDecimal("1.0");
+                BigDecimal zero = new BigDecimal("0.0");
+
+                if (pn.compareTo(py) == 1) {
+                    BigDecimal result1 = one.subtract(py);
+                    py = result1;
+
+                    BigDecimal result2 = one.subtract(pn);
+                    pn = result2;
+                }
+                BigDecimal result1 = p.multiply(py);
+                BigDecimal result2 = one.subtract(p);
+                BigDecimal result3 = result2.multiply(pn);
+                pe = result1.add(result3);
+
+                if (!(py.compareTo(one) == 0 && p.compareTo(one) == 0) &&
+                        (pe.compareTo(one) == -1 && pe.compareTo(zero) == 1))
+                {
+                    BigDecimal res1 = p.multiply(py);
+                    BigDecimal res2 = res1.divide(pe, 22, RoundingMode.HALF_UP);
+
+                    BigDecimal res3 = one.subtract(py);
+                    BigDecimal res4 = p.multiply(res3);
+                    BigDecimal res5 = one.subtract(pe);
+                    BigDecimal res6 = res4.divide(res5, 22, RoundingMode.HALF_UP);
+
+                    BigDecimal res7 = res2.subtract(res6);
+                    BigDecimal result = diagnosticValues.get(j).add(res7);
+
+                    diagnosticValues.set(j, result);
+                }
+
+                if(diagnosticValues.get(j).compareTo(max) == 1)
+                {
+                    max = diagnosticValues.get(j);
+                    // TODO: przypiac do jakiejs zmiennej nazwe symptomu ktory ma w danej iteracji najwieksze znaczenie
+                }
+
+
+                }
+
+                // TODO: zwrocic nazwe symptomu ktory wybrany zostal jako nastepny
+            }
+        }
+
+    private void asnwered(String p_question, int p_answer)
     {
-        //TODO: handle click
-        addAnswer(p_question, "", 3);
-    }
+        for(int i = 0; i < BindingSymptomHypothesisTable.getSymptomNames().size(); i++)
+        {
+            ArrayList<String> l_listOfNames = BindingSymptomHypothesisTable.getSymptomNames();
+                if(l_listOfNames.get(i) == p_question)
+                {
+                    for(int k = 0; k < hypotheses.size(); k++)
+                    {
+                        BigDecimal p = new BigDecimal(hypotheses.get(k).getHypothseisProbability());
+                        BigDecimal py = new BigDecimal(BindingSymptomHypothesisTable.get_p1_list().get(i).get(k));
+                        BigDecimal pn = new BigDecimal(BindingSymptomHypothesisTable.get_p2_list().get(i).get(k));
+                        BigDecimal one = new BigDecimal("1.0000000000000000000000");
 
-    private void handleDontKnowAnswerToGeneralSymptom(String p_question)
-    {
-        //TODO: handle click
-        addAnswer(p_question, "", 2);
-    }
+                        MathContext mc = new MathContext(22);
+                        BigDecimal resul11 = p.multiply(py);
+                        BigDecimal resul22 = one.subtract(p);
+                        BigDecimal resul33 = resul22.multiply(pn);
+                        BigDecimal pe = resul11.add(resul33);
 
-    private void handleRatherNoAnswerToGeneralSymptom(String p_question)
-    {
-        addAnswer(p_question, "", 1);
-    }
+                        BigDecimal zero = new BigDecimal("0.0000000000000000000000");
 
-//    private void handleNoAnswerToGeneralSymptom(String p_question)
-//    {
-//        addAnswer(p_question, "", 0);
-//    }
-
-    private void handleNo(String p_question)
-    {
-        addAnswer(p_question, "",0);
-    }
-
-    private void po_odpowiedzi() {
-        for (int i = 0; i < answers.size(); i++) {
-            Answers local = answers.get(i);
-            int odp = local.getAnswer();
-            String l_name = answers.get(i).getName();
-
-            ArrayList<String> l_listOfNames = BindingSymptomHypothesisTable.get_names_list().get(i);
-
-            for (int k = 0; k < l_listOfNames.size(); k++) {
-                for (int j = 0; j < hypotheses.size(); j++) {
-                    if (Integer.parseInt(l_listOfNames.get(k)) == j){
-
-                            BigDecimal p = test.getPaList().get(j);
-                            BigDecimal py = new BigDecimal(BindingSymptomHypothesisTable.get_p1_list().get(i).get(k));
-                            BigDecimal pn = new BigDecimal(BindingSymptomHypothesisTable.get_p2_list().get(i).get(k));
-                            BigDecimal one = new BigDecimal("1.0000000000000000000000");
-
-                            MathContext mc = new MathContext(22);
-                            BigDecimal res1 = one.subtract(p, mc);
-                            BigDecimal res2 = p.multiply(py);
-                            BigDecimal res3 = res1.multiply(pn);
-                            BigDecimal pe = res2.add(res3);
-                            BigDecimal zero = new BigDecimal("0.0000000000000000000000");
-
-                            if (odp == 4) {
-                                if (pe.compareTo(zero) == 1) {
-                                    //barylowi tbp[i] *= py/pe
-                                    BigDecimal div = py.divide(pe, mc);
-                                    BigDecimal result = p.multiply(div, mc);
-                                    test.setResult(j, String.valueOf(result));
-                                    continue;
-                                }
+                        if(p_answer == 4)
+                        {
+                            if (pe.compareTo(zero) == 1) {
+                                //barylowi tbp[i] *= py/pe
+                                BigDecimal div = py.divide(pe, mc);
+                                BigDecimal result = p.multiply(div, mc);
+                                hypotheses.get(k).setHypothesisProbability(String.valueOf(result));
+                                test.setResult(k, String.valueOf(result));
                             }
+                        }
 
-                            if (odp == 3) {
-                                if (pe.compareTo(zero) == 1) {
-                                    // barylowi tbp[i] *= 0.5* (py/pe) +0.5
-                                    BigDecimal half = new BigDecimal("0.5000000000000000000000");
-                                    BigDecimal resul2 = py.divide(pe, mc);
-                                    BigDecimal resul3 = half.multiply(resul2, mc);
-                                    BigDecimal result1 = resul3.add(half);
-                                    BigDecimal result = p.multiply(result1, mc);
-                                    test.setResult(j, String.valueOf(result));
-                                    continue;
-                                }
+                        if(p_answer == 3)
+                        {
+                            if (pe.compareTo(zero) == 1) {
+                                // barylowi tbp[i] *= 0.5* (py/pe) +0.5
+                                BigDecimal half = new BigDecimal("0.5000000000000000000000");
+                                BigDecimal resul2 = py.divide(pe, mc);
+                                BigDecimal resul3 = half.multiply(resul2, mc);
+                                BigDecimal result1 = resul3.add(half);
+                                BigDecimal result = p.multiply(result1, mc);
+                                hypotheses.get(k).setHypothesisProbability(String.valueOf(result));
+                                test.setResult(k, String.valueOf(result));
                             }
+                        }
 
-                            if (odp == 1) {
-                                if (pe.compareTo(one) == -1) {
-                                    // barylowi: raczej_nie: tbp[i] *= 0.5* (1-py)/(1-pe) +0.5
-                                    BigDecimal half = new BigDecimal("0.5000000000000000000000");
-                                    BigDecimal result1 = one.subtract(py, mc);
-                                    BigDecimal result2 = one.subtract(pe, mc);
-                                    BigDecimal multi = half.multiply(result1, mc);
-                                    BigDecimal div = multi.divide(result2, mc);
-                                    BigDecimal result3 = div.add(half);
-                                    BigDecimal result = p.multiply(result3, mc);
-                                    test.setResult(j, String.valueOf(result));
-                                    continue;
-                                }
+                        if(p_answer == 1)
+                        {
+                            if (pe.compareTo(one) == -1) {
+                                // barylowi: raczej_nie: tbp[i] *= 0.5* (1-py)/(1-pe) +0.5
+                                BigDecimal half = new BigDecimal("0.5000000000000000000000");
+                                BigDecimal result1 = one.subtract(py, mc);
+                                BigDecimal result2 = one.subtract(pe, mc);
+                                BigDecimal multi = half.multiply(result1, mc);
+                                BigDecimal div = multi.divide(result2, mc);
+                                BigDecimal result3 = div.add(half);
+                                BigDecimal result = p.multiply(result3, mc);
+                                hypotheses.get(k).setHypothesisProbability(String.valueOf(result));
+                                test.setResult(k, String.valueOf(result));
                             }
+                        }
 
-                            if (odp == 0) {
-                                //handle nie
-                                if (pe.compareTo(one) == -1) {
-                                    // barylowi tbp[i] *= (1-py)/(1-pe)
-                                    BigDecimal resu1 = one.subtract(py, mc);
-                                    BigDecimal resu2 = one.subtract(pe, mc);
-                                    BigDecimal resu3 = resu1.divide(resu2, mc);
-                                    BigDecimal result = p.multiply(resu3, mc);
-                                    test.setResult(j, String.valueOf(result));
-                                    continue;
-                                }
+                        if(p_answer == 0)
+                        {
+                            if (pe.compareTo(one) == -1) {
+                                // barylowi tbp[i] *= (1-py)/(1-pe)
+                                BigDecimal resu1 = one.subtract(py, mc);
+                                BigDecimal resu2 = one.subtract(pe, mc);
+                                BigDecimal resu3 = resu1.divide(resu2, mc);
+                                BigDecimal result = p.multiply(resu3, mc);
+                                hypotheses.get(k).setHypothesisProbability(String.valueOf(result));
+                                test.setResult(k, String.valueOf(result));
                             }
+                        }
                     }
                 }
-            }
         }
     }
 
@@ -210,9 +213,13 @@ public class Expertise_display extends AppCompatActivity {
         bDontKnow.setEnabled(false);
         bShowReult.setEnabled(true);
 
-        po_odpowiedzi();
-        ArrayList<BigDecimal> changed = test.getPaList();
-        ArrayList<String> names = test.getHN();
+        ArrayList<BigDecimal> changed = new ArrayList<>();
+        ArrayList<String> names = new ArrayList<>();
+        for(int i = 0; i < hypotheses.size(); i++)
+        {
+            changed.add(new BigDecimal(hypotheses.get(i).getHypothseisProbability()));
+            names.add(hypotheses.get(i).getHypothesisName());
+        }
 
         if (changed.size() > 0)
         {
@@ -227,7 +234,7 @@ public class Expertise_display extends AppCompatActivity {
                     name = names.get(i);
                 }
             }
-            Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "result: " + name + ", val: " + result, Toast.LENGTH_LONG).show();
+            Toast.makeText(MainActivity.mainActivity.getApplicationContext(), "result: " + name + ", val: " + result.toPlainString(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -235,6 +242,12 @@ public class Expertise_display extends AppCompatActivity {
     {
         ArrayList<String> probability = new ArrayList<>();
         ArrayList<String> names = new ArrayList<>();
+
+        for(int i = 0; i < BindingSymptomHypothesisTable.get_names_list().size(); i++)
+        {
+            BindingSymptomHypothesisTable.set_symptom_name(symptoms.get(i).getQuestion());
+        }
+
         for (int i = 0; i < hypotheses.size(); i++)
         {
             probability.add(hypotheses.get(i).getHypothseisProbability());
@@ -254,7 +267,6 @@ public class Expertise_display extends AppCompatActivity {
 
         hypotheses = getIntent().getParcelableArrayListExtra("hypo");
         symptoms = getIntent().getParcelableArrayListExtra("symptoms");
-       // generalSymptoms = getIntent().getParcelableArrayListExtra("general");
         BindingSymptomHypothesisTable = getIntent().getParcelableExtra("bindings");
 
         initTestObject();
@@ -272,14 +284,7 @@ public class Expertise_display extends AppCompatActivity {
         bShowReult.setEnabled(false);
 
 
-//        if (generalSymptoms.size() != 0)
-//        {
-//            String l_question = generalSymptoms.get(0).getGeneralSymptomQuestion();
-//            displayGeneralSymptomQuestion(l_question);
-//            generalQuestIndex++;
-//        }
         if (symptoms.size() != 0){
-            //TODO: determine how to choose first question to show
             displaySymptomQuestion();
         }
 
@@ -293,29 +298,21 @@ public class Expertise_display extends AppCompatActivity {
 
         bShowReult.setOnClickListener(new View.OnClickListener(){
             public void onClick(View v) {
-                // barylowi1
                 Intent i = new Intent(MainActivity.mainActivity, ShowResult.class);
-                i.putExtra("test", test);
+                i.putParcelableArrayListExtra("test", hypotheses);
                 startActivity(i);
             }
         });
 
         bDontKnow.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) { //barylowi
-//                if (generalSymptoms.size() != 0 && validateIfAnyGeneralSymptomsQuestionsLeft())
-//                {
-//                    //TODO: try to modify algorithm to wait with metaknowleage questions until they are needed
-//                    //TODO: determine how to modify apriori on YES click
-//                    String l_question = generalSymptoms.get(generalQuestIndex).getGeneralSymptomQuestion();
-//                    handleDontKnowAnswerToGeneralSymptom(l_question);
-//                    index++;
-//                }
+            public void onClick(View v) {
                 if (symptoms.size() != 0 && validateIfAnySymptomsQuestionsLeft()){
-                    //TODO: determine how to choose next question
-                    //TODO: determine how to modify apriori on YES click
                     String l_question = symptoms.get(symptomQuestIndex).getQuestion();
+                    String l_name = symptoms.get(symptomQuestIndex).getSymptomName();
                     displaySymptomQuestion();
-                    handleDontKnowAnswerToGeneralSymptom(l_question);
+                    //handleDontKnowAnswerToGeneralSymptom(l_name, l_question);
+                    asnwered(l_question, 2);
+                    symptomQuestIndex++;
                     index++;
                 }
                 else
@@ -326,19 +323,12 @@ public class Expertise_display extends AppCompatActivity {
 
         bYea.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-//                if (generalSymptoms.size() != 0 && validateIfAnyGeneralSymptomsQuestionsLeft())
-//                {
-//                    String l_question = generalSymptoms.get(generalQuestIndex).getGeneralSymptomQuestion();
-//                    displayGeneralSymptomQuestion(l_question);
-//                    handleYesAnswerToGeneralSymptom(l_question);
-//                    generalQuestIndex++;
-//                    index++;
-//                }
                 if (symptoms.size() != 0 && validateIfAnySymptomsQuestionsLeft()){
                     String l_question = symptoms.get(symptomQuestIndex).getQuestion();
                     String l_name = symptoms.get(symptomQuestIndex).getSymptomName();
                     displaySymptomQuestion();
-                    handleYes(l_question, l_name);
+                    //handleYes(l_question, l_question);
+                    asnwered(l_question, 4);
                     symptomQuestIndex++;
                 }
                 else
@@ -350,20 +340,12 @@ public class Expertise_display extends AppCompatActivity {
 
         bNo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-//                if (generalSymptoms.size() != 0 && validateIfAnyGeneralSymptomsQuestionsLeft())
-//                {
-//                    String l_question = generalSymptoms.get(generalQuestIndex).getGeneralSymptomQuestion();
-//                    displayGeneralSymptomQuestion(l_question);
-//                    handleNoAnswerToGeneralSymptom(l_question);
-//                    generalQuestIndex++;
-//                    index++;
-//                }
                 if (symptoms.size() != 0 && validateIfAnySymptomsQuestionsLeft()){
-                    //TODO: determine how to choose next question
-                    //TODO: determine how to modify apriori on YES click
                     String l_question = symptoms.get(symptomQuestIndex).getQuestion();
+                    String l_name = symptoms.get(symptomQuestIndex).getSymptomName();
                     displaySymptomQuestion();
-                    handleNo(l_question);
+                    //handleNo(l_question, l_question);
+                    asnwered(l_question, 0);
                     symptomQuestIndex++;
                     index++;
                 }
@@ -377,11 +359,11 @@ public class Expertise_display extends AppCompatActivity {
         bMaybeYea.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                  if (symptoms.size() != 0 && validateIfAnySymptomsQuestionsLeft()){
-                    //TODO: determine how to choose next question
-                    //TODO: determine how to modify apriori on YES click
                      String l_question = symptoms.get(symptomQuestIndex).getQuestion();
+                     String l_name = symptoms.get(symptomQuestIndex).getSymptomName();
                      displaySymptomQuestion();
-                     handleRatherYesAnswerToGeneralSymptom(l_question);
+                     //handleRatherYesAnswerToGeneralSymptom(l_question, l_question);
+                     asnwered(l_question, 3);
                      symptomQuestIndex++;
                      index++;
                 }
@@ -395,11 +377,11 @@ public class Expertise_display extends AppCompatActivity {
         bMaybeNot.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (symptoms.size() != 0 && validateIfAnySymptomsQuestionsLeft()){
-//                    //TODO: determine how to choose next question
-//                    //TODO: determine how to modify apriori on YES click
                     String l_question = symptoms.get(symptomQuestIndex).getQuestion();
+                    String l_name = symptoms.get(symptomQuestIndex).getSymptomName();
                     displaySymptomQuestion();
-                    handleRatherNoAnswerToGeneralSymptom(l_question);
+                    //handleRatherNoAnswerToGeneralSymptom(l_question, l_question);
+                    asnwered(l_question, 1);
                     symptomQuestIndex++;
                     index++;
                 }
@@ -413,7 +395,7 @@ public class Expertise_display extends AppCompatActivity {
 
     public static  class ShowResult extends  AppCompatActivity
     {
-        private Test test;
+        private ArrayList<Hypothesis> test;
         private TextView tResult;
 
         @Override
@@ -421,16 +403,15 @@ public class Expertise_display extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_show_result);
 
-            test = getIntent().getParcelableExtra("test");
+            test = getIntent().getParcelableArrayListExtra("test");
             tResult = findViewById(R.id.tShowResult);
             tResult.setMovementMethod(new ScrollingMovementMethod());
 
             String msg = "";
-            //BigDecimal tmp = test.getPaList().get(0);
-            for(int i = 0; i < test.getPaList().size(); i++)
+            for(int i = 0; i < test.size(); i++)
             {
-                BigDecimal local = test.getPaList().get(i);
-                String sLocal = test.getHN().get(i);
+                BigDecimal local = new BigDecimal(test.get(i).getHypothseisProbability());
+                String sLocal = test.get(i).getHypothesisName();
                 String ll = String.valueOf(local.toPlainString()).substring(0, 12);
                 msg += sLocal + " " + ll + '\n';
             }

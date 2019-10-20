@@ -13,6 +13,7 @@ public class BindingSymptomHypothesis implements Parcelable {
     private ArrayList<ArrayList<String>> names = new ArrayList<>();
     private ArrayList<ArrayList<String>> l_p1 = new ArrayList<>();
     private ArrayList<ArrayList<String>> l_p2 = new ArrayList<>();
+    private ArrayList<String> m_symptomName = new ArrayList<>();
 
 
     public BindingSymptomHypothesis(){}
@@ -26,6 +27,7 @@ public class BindingSymptomHypothesis implements Parcelable {
         in.readList(names, ArrayList.class.getClassLoader());
         in.readList(l_p1, ArrayList.class.getClassLoader());
         in.readList(l_p2, ArrayList.class.getClassLoader());
+        in.readList(m_symptomName, ArrayList.class.getClassLoader());
     }
 
     public void setP2s(ArrayList<ArrayList<String>> p2)
@@ -36,6 +38,16 @@ public class BindingSymptomHypothesis implements Parcelable {
     public void setP1s(ArrayList<ArrayList<String>> p1)
     {
         this.l_p1 = p1;
+    }
+
+    public void set_symptom_name(String p_name)
+    {
+        m_symptomName.add(p_name);
+    }
+
+    public ArrayList<String> getSymptomNames ()
+    {
+        return m_symptomName;
     }
 
     public void set_p2_list(ArrayList<String> p_p2List)
@@ -92,6 +104,7 @@ public class BindingSymptomHypothesis implements Parcelable {
         dest.writeList(names);
         dest.writeList(l_p1);
         dest.writeList(l_p2);
+        dest.writeList(m_symptomName);
     }
 
     public static final Parcelable.Creator<BindingSymptomHypothesis> CREATOR = new Parcelable.Creator<BindingSymptomHypothesis>()

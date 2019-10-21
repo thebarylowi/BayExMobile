@@ -72,42 +72,35 @@ public class Expertise_display extends AppCompatActivity {
             diagnosticValues.add(new BigDecimal("0.0"));
         }
 
+        BigDecimal result = new BigDecimal("0.0");
+        BigDecimal py = new BigDecimal("0.0");
+        BigDecimal pn = new BigDecimal("0.0");
+        BigDecimal one = new BigDecimal("1.0");
+        BigDecimal zero = new BigDecimal("0.0");
+        BigDecimal pe;
+
         for(int i = 0; i < hypotheses.size(); i++)
         {
             BigDecimal p = new BigDecimal(hypotheses.get(i).getHypothseisProbability());
             for(int j = 0; j < BindingSymptomHypothesisTable.getSymptomNames().size(); j++) {
                 if (symptoms.size() != 0 && symptoms.get(j).isAnswered() == false) {
+
                     for (int k = 0; k < BindingSymptomHypothesisTable.get_p1_list().get(j).size(); k++) {
-                        BigDecimal py = new BigDecimal(BindingSymptomHypothesisTable.get_p1_list().get(j).get(k));
-                        BigDecimal pn = new BigDecimal(BindingSymptomHypothesisTable.get_p2_list().get(j).get(k));
-                        BigDecimal one = new BigDecimal("1.0");
-                        BigDecimal zero = new BigDecimal("0.0");
-
-                        if (pn.compareTo(py) == 1) {
-                            BigDecimal result1 = one.subtract(py);
-                            py = result1;
-
-                            BigDecimal result2 = one.subtract(pn);
-                            pn = result2;
+                        py = new BigDecimal(BindingSymptomHypothesisTable.get_p1_list().get(j).get(k));
+                        pn = new BigDecimal(BindingSymptomHypothesisTable.get_p2_list().get(j).get(k));
+                    }
+                        if (pn.compareTo(py) == 1)
+                        {
+                            py = one.subtract(py);
+                            pn = one.subtract(pn);
                         }
-                        BigDecimal result1 = p.multiply(py);
-                        BigDecimal result2 = one.subtract(p);
-                        BigDecimal result3 = result2.multiply(pn);
-                        BigDecimal pe = result1.add(result3);
+
+                        pe = p.multiply(py).add(one.subtract(p).multiply(pn));
 
                         if (!(py.compareTo(one) == 0 && p.compareTo(one) == 0) &&
-                                (pe.compareTo(one) == -1 && pe.compareTo(zero) == 1)) {
-                            BigDecimal res1 = p.multiply(py);
-                            BigDecimal res2 = res1.divide(pe, 22, RoundingMode.HALF_UP);
-
-                            BigDecimal res3 = one.subtract(py);
-                            BigDecimal res4 = p.multiply(res3);
-                            BigDecimal res5 = one.subtract(pe);
-                            BigDecimal res6 = res4.divide(res5, 22, RoundingMode.HALF_UP);
-
-                            BigDecimal res7 = res2.subtract(res6);
-                            BigDecimal result = diagnosticValues.get(j).add(res7);
-
+                                (pe.compareTo(one) == -1 && pe.compareTo(zero) == 1))
+                        {
+                            result = diagnosticValues.get(j).add(p.multiply(py).divide(pe, 22, RoundingMode.HALF_UP).subtract(p.multiply(one.subtract(py)).divide(one.subtract(pe), 22, RoundingMode.HALF_UP)));
                             diagnosticValues.set(j, result);
                         }
 
@@ -115,7 +108,7 @@ public class Expertise_display extends AppCompatActivity {
                             max = diagnosticValues.get(j);
                             l_mostAccurateQuestion = BindingSymptomHypothesisTable.getSymptomNames().get(j);
                         }
-                    }
+
                 }
             }
         }
@@ -129,13 +122,11 @@ public class Expertise_display extends AppCompatActivity {
             ArrayList<String> l_listOfNames = BindingSymptomHypothesisTable.getSymptomNames();
                 if(l_listOfNames.get(i) == p_question)
                 {
-                    for(int k = 0; k < hypotheses.size(); k++) // TODO check if it works when it's less then all hypotheses filled in relations!
+                    for(int k = 0; k < BindingSymptomHypothesisTable.get_p1_list().get(i).size(); k++)
                     {
-                        for(int l = 0; l < BindingSymptomHypothesisTable.get_p1_list().get(i).size(); l++)
-                        {
                         BigDecimal p = new BigDecimal(hypotheses.get(k).getHypothseisProbability());
-                        BigDecimal py = new BigDecimal(BindingSymptomHypothesisTable.get_p1_list().get(i).get(l)).setScale(4, BigDecimal.ROUND_HALF_UP);
-                        BigDecimal pn = new BigDecimal(BindingSymptomHypothesisTable.get_p2_list().get(i).get(l)).setScale(4, BigDecimal.ROUND_HALF_UP);
+                        BigDecimal py = new BigDecimal(BindingSymptomHypothesisTable.get_p1_list().get(i).get(k)).setScale(4, BigDecimal.ROUND_HALF_UP);
+                        BigDecimal pn = new BigDecimal(BindingSymptomHypothesisTable.get_p2_list().get(i).get(k)).setScale(4, BigDecimal.ROUND_HALF_UP);
                         BigDecimal one = new BigDecimal("1.0000000000000000000000");
 
                         Log.e("value", p.toPlainString());
@@ -209,7 +200,7 @@ public class Expertise_display extends AppCompatActivity {
                             }
                         }
                     }
-                }
+
                 }
         }
     }

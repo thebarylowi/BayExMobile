@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -40,6 +39,10 @@ public class Expertise_display extends AppCompatActivity {
     private int generalIndex = 0;
     private int index = 0;
 
+    private BigDecimal one = new BigDecimal("1.0000000000000000000000");
+    private BigDecimal zero = new BigDecimal("0.0000000000000000000000");
+    private BigDecimal half = new BigDecimal("0.5000000000000000000000");
+
     private TextView bQuest;
 
     private void addAnswer(String p_question, String p_name, int p_answer)
@@ -61,55 +64,42 @@ public class Expertise_display extends AppCompatActivity {
         return symptomQuestIndex < symptoms.size();
     }
 
-    private String computeDiagnosticValue()
-    {
-        ArrayList<BigDecimal> diagnosticValues = new ArrayList<>();
+    private String computeDiagnosticValue() {
+        BigDecimal p, py, pn, pe, result;
         BigDecimal max = new BigDecimal("-1.0");
         String l_mostAccurateQuestion = "";
-
-        for(int i = 0; i < BindingSymptomHypothesisTable.getSymptomNames().size(); i++)
-        {
-            diagnosticValues.add(new BigDecimal("0.0"));
+        ArrayList<BigDecimal> values = new ArrayList<>();
+        for (int i = 0; i < BindingSymptomHypothesisTable.getSymptomNames().size(); i++) {
+            values.add(new BigDecimal("0.0"));
         }
 
-        BigDecimal result = new BigDecimal("0.0");
-        BigDecimal py = new BigDecimal("0.0");
-        BigDecimal pn = new BigDecimal("0.0");
-        BigDecimal one = new BigDecimal("1.0");
-        BigDecimal zero = new BigDecimal("0.0");
-        BigDecimal pe;
-
-        for(int i = 0; i < hypotheses.size(); i++)
+        for (int i = 0; i < hypotheses.size(); i++)
         {
-            BigDecimal p = new BigDecimal(hypotheses.get(i).getHypothseisProbability());
-            for(int j = 0; j < BindingSymptomHypothesisTable.getSymptomNames().size(); j++) {
-                if (symptoms.size() != 0 && symptoms.get(j).isAnswered() == false) {
+            p = new BigDecimal(hypotheses.get(i).getHypothseisProbability());
 
-                    for (int k = 0; k < BindingSymptomHypothesisTable.get_p1_list().get(j).size(); k++) {
-                        py = new BigDecimal(BindingSymptomHypothesisTable.get_p1_list().get(j).get(k));
-                        pn = new BigDecimal(BindingSymptomHypothesisTable.get_p2_list().get(j).get(k));
-                    }
-                        if (pn.compareTo(py) == 1)
-                        {
+            for (int j = 0; j < BindingSymptomHypothesisTable.get_names_list().size(); j++) {
+                // for po wszystkich wiazaniach hs
+                    if (!symptoms.get(j).isAnswered() && BindingSymptomHypothesisTable.get_p1_list().get(j).size() > i) {
+                        py = new BigDecimal(BindingSymptomHypothesisTable.get_p1_list().get(j).get(i));
+                        pn = new BigDecimal(BindingSymptomHypothesisTable.get_p2_list().get(j).get(i));
+
+                        if (pn.compareTo(py) == 1) {
                             py = one.subtract(py);
                             pn = one.subtract(pn);
                         }
 
                         pe = p.multiply(py).add(one.subtract(p).multiply(pn));
 
-                        if (!(py.compareTo(one) == 0 && p.compareTo(one) == 0) &&
-                                (pe.compareTo(one) == -1 && pe.compareTo(zero) == 1))
-                        {
-                            result = diagnosticValues.get(j).add(p.multiply(py).divide(pe, 22, RoundingMode.HALF_UP).subtract(p.multiply(one.subtract(py)).divide(one.subtract(pe), 22, RoundingMode.HALF_UP)));
-                            diagnosticValues.set(j, result);
+                        if (!(py.compareTo(one) == 0 && p.compareTo(one) == 0) && (pe.compareTo(one) == -1 && pe.compareTo(zero) == 1)) {
+                            result = values.get(j).add(p.multiply(py).divide(pe, 22, RoundingMode.HALF_UP).subtract(p.multiply(one.subtract(py)).divide(one.subtract(pe), 22, RoundingMode.HALF_UP)));
+                            values.set(j, result);
                         }
 
-                        if (diagnosticValues.get(j).compareTo(max) == 1) {
-                            max = diagnosticValues.get(j);
+                        if (values.get(j).compareTo(max) == 1) {
+                            max = values.get(j);
                             l_mostAccurateQuestion = BindingSymptomHypothesisTable.getSymptomNames().get(j);
                         }
-
-                }
+                    }
             }
         }
     return l_mostAccurateQuestion;
@@ -117,6 +107,10 @@ public class Expertise_display extends AppCompatActivity {
 
     private void asnwered(String p_question, int p_answer)
     {
+        BigDecimal p;
+        BigDecimal py;
+        BigDecimal pn;
+
         for(int i = 0; i < BindingSymptomHypothesisTable.getSymptomNames().size(); i++)
         {
             ArrayList<String> l_listOfNames = BindingSymptomHypothesisTable.getSymptomNames();
@@ -124,22 +118,13 @@ public class Expertise_display extends AppCompatActivity {
                 {
                     for(int k = 0; k < BindingSymptomHypothesisTable.get_p1_list().get(i).size(); k++)
                     {
-                        BigDecimal p = new BigDecimal(hypotheses.get(k).getHypothseisProbability());
-                        BigDecimal py = new BigDecimal(BindingSymptomHypothesisTable.get_p1_list().get(i).get(k)).setScale(4, BigDecimal.ROUND_HALF_UP);
-                        BigDecimal pn = new BigDecimal(BindingSymptomHypothesisTable.get_p2_list().get(i).get(k)).setScale(4, BigDecimal.ROUND_HALF_UP);
-                        BigDecimal one = new BigDecimal("1.0000000000000000000000");
-
-                        Log.e("value", p.toPlainString());
-                        Log.e("value", py.toPlainString());
-                        Log.e("value", pn.toPlainString());
+                        p = new BigDecimal(hypotheses.get(k).getHypothseisProbability());
+                        py = new BigDecimal(BindingSymptomHypothesisTable.get_p1_list().get(i).get(k)).setScale(4, BigDecimal.ROUND_HALF_UP);
+                        pn = new BigDecimal(BindingSymptomHypothesisTable.get_p2_list().get(i).get(k)).setScale(4, BigDecimal.ROUND_HALF_UP);
 
                         MathContext mc = new MathContext(22);
-                        BigDecimal resul11 = p.multiply(py);
-                        BigDecimal resul22 = one.subtract(p);
-                        BigDecimal resul33 = resul22.multiply(pn);
-                        BigDecimal pe = resul11.add(resul33);
+                        BigDecimal pe = p.multiply(py).add(one.subtract(p).multiply(pn));
 
-                        BigDecimal zero = new BigDecimal("0.0000000000000000000000");
 
                         if(p_answer == 4)
                         {
@@ -147,10 +132,8 @@ public class Expertise_display extends AppCompatActivity {
 
                                 //barylowi tbp[i] *= py/pe
                                 BigDecimal div = py.divide(pe, mc);
-                                BigDecimal result = p.multiply(div, mc);
-                                hypotheses.get(k).setHypothesisProbability(String.valueOf(result));
-                                test.setResult(k, String.valueOf(result));
-                                Log.e("onTak", result.toPlainString());
+                                hypotheses.get(k).setHypothesisProbability(String.valueOf(p.multiply(div, mc)));
+                                test.setResult(k, String.valueOf(p.multiply(div, mc)));
                             }
                         }
 
@@ -158,14 +141,12 @@ public class Expertise_display extends AppCompatActivity {
                         {
                             if (pe.compareTo(zero) == 1) {
                                 // barylowi tbp[i] *= 0.5* (py/pe) +0.5
-                                BigDecimal half = new BigDecimal("0.5000000000000000000000");
                                 BigDecimal resul2 = py.divide(pe, mc);
                                 BigDecimal resul3 = half.multiply(resul2, mc);
                                 BigDecimal result1 = resul3.add(half);
                                 BigDecimal result = p.multiply(result1, mc);
                                 hypotheses.get(k).setHypothesisProbability(String.valueOf(result));
                                 test.setResult(k, String.valueOf(result));
-                                Log.e("onRaczejTak", result.toPlainString());
                             }
                         }
 
@@ -173,7 +154,6 @@ public class Expertise_display extends AppCompatActivity {
                         {
                             if (pe.compareTo(one) == -1) {
                                 // barylowi: raczej_nie: tbp[i] *= 0.5* (1-py)/(1-pe) +0.5
-                                BigDecimal half = new BigDecimal("0.5000000000000000000000");
                                 BigDecimal result1 = one.subtract(py, mc);
                                 BigDecimal result2 = one.subtract(pe, mc);
                                 BigDecimal multi = half.multiply(result1, mc);
@@ -182,7 +162,6 @@ public class Expertise_display extends AppCompatActivity {
                                 BigDecimal result = p.multiply(result3, mc);
                                 hypotheses.get(k).setHypothesisProbability(String.valueOf(result));
                                 test.setResult(k, String.valueOf(result));
-                                Log.e("onRaczejNie", result.toPlainString());
                             }
                         }
 
@@ -196,7 +175,6 @@ public class Expertise_display extends AppCompatActivity {
                                 BigDecimal result = p.multiply(resu3, mc);
                                 hypotheses.get(k).setHypothesisProbability(String.valueOf(result));
                                 test.setResult(k, String.valueOf(result));
-                                Log.e("onNie", result.toPlainString());
                             }
                         }
                     }
@@ -297,7 +275,7 @@ public class Expertise_display extends AppCompatActivity {
 
         if (symptoms.size() != 0){
             String question = computeDiagnosticValue();
-            displaySymptomQuestion("");
+            displaySymptomQuestion(question);
         }
 
         bShowAnswers.setOnClickListener(new View.OnClickListener() {
@@ -319,7 +297,6 @@ public class Expertise_display extends AppCompatActivity {
         bDontKnow.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (symptoms.size() != 0 && validateIfAnySymptomsQuestionsLeft()){
-                    //String l_question = symptoms.get(symptomQuestIndex).getQuestion();
                     String l_question = computeDiagnosticValue();
                     displaySymptomQuestion(l_question);
                     setIsAnswered(l_question);
@@ -336,12 +313,9 @@ public class Expertise_display extends AppCompatActivity {
         bYea.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (symptoms.size() != 0 && validateIfAnySymptomsQuestionsLeft()){
-                    //String l_question = symptoms.get(symptomQuestIndex).getQuestion();
                     String l_question = computeDiagnosticValue();
                     displaySymptomQuestion(l_question);
                     setIsAnswered(l_question);
-                    //displaySymptomQuestion();
-                    //symptoms.get(symptomQuestIndex).setIsAnswered(true);
                     asnwered(l_question, 4);
                     symptomQuestIndex++;
                 }
@@ -355,11 +329,9 @@ public class Expertise_display extends AppCompatActivity {
         bNo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (symptoms.size() != 0 && validateIfAnySymptomsQuestionsLeft()){
-                    //String l_question = symptoms.get(symptomQuestIndex).getQuestion();
                     String l_question = computeDiagnosticValue();
                     displaySymptomQuestion(l_question);
                     setIsAnswered(l_question);
-                   // symptoms.get(symptomQuestIndex).setIsAnswered(true);
                     asnwered(l_question, 0);
                     symptomQuestIndex++;
                     index++;
@@ -374,11 +346,9 @@ public class Expertise_display extends AppCompatActivity {
         bMaybeYea.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                  if (symptoms.size() != 0 && validateIfAnySymptomsQuestionsLeft()){
-                     //String l_question = symptoms.get(symptomQuestIndex).getQuestion();
                      String l_question = computeDiagnosticValue();
                      displaySymptomQuestion(l_question);
                      setIsAnswered(l_question);
-                    // symptoms.get(symptomQuestIndex).setIsAnswered(true);
                      asnwered(l_question, 3);
                      symptomQuestIndex++;
                      index++;
@@ -393,11 +363,9 @@ public class Expertise_display extends AppCompatActivity {
         bMaybeNot.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (symptoms.size() != 0 && validateIfAnySymptomsQuestionsLeft()){
-                    //String l_question = symptoms.get(symptomQuestIndex).getQuestion();
                     String l_question = computeDiagnosticValue();
                     displaySymptomQuestion(l_question);
                     setIsAnswered(l_question);
-                    //symptoms.get(symptomQuestIndex).setIsAnswered(true);
                     asnwered(l_question, 1);
                     symptomQuestIndex++;
                     index++;
@@ -443,15 +411,6 @@ public class Expertise_display extends AppCompatActivity {
                 }
                 msg += l_name + " " + l_msg.toPlainString() + '\n';
             }
-
-
-//            for(int i = 0; i < test.size(); i++)
-//            {
-//                BigDecimal local = new BigDecimal(test.get(i).getHypothseisProbability());
-//                String sLocal = test.get(i).getHypothesisName();
-//                String ll = String.valueOf(local.toPlainString()).substring(0, 12);
-//                msg += sLocal + " " + ll + '\n';
-//            }
 
             tResult.setText(msg);
         }
@@ -499,7 +458,7 @@ public class Expertise_display extends AppCompatActivity {
                     quest += "nie" + '\n';
                 }
             }
-            tQuestions.setText(String.valueOf(quest));
+            tQuestions.setText(quest);
         }
     }
 }

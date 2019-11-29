@@ -17,6 +17,16 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class Expertise_display extends AppCompatActivity {
 
@@ -189,7 +199,7 @@ public class Expertise_display extends AppCompatActivity {
         bYea.setEnabled(false);
         bNo.setEnabled(false);
         bDontKnow.setEnabled(false);
-        bShowReult.setEnabled(true);
+        //bShowReult.setEnabled(true);
 
         ArrayList<BigDecimal> changed = new ArrayList<>();
         ArrayList<String> names = new ArrayList<>();
@@ -270,7 +280,7 @@ public class Expertise_display extends AppCompatActivity {
         bShowAnswers = findViewById(R.id.bShowAnswers);
         bDontKnow = findViewById(R.id.bDontKnow);
         bShowReult = findViewById(R.id.bShowResult);
-        bShowReult.setEnabled(false);
+        //bShowReult.setEnabled(false);
 
 
         if (symptoms.size() != 0){
@@ -301,6 +311,7 @@ public class Expertise_display extends AppCompatActivity {
                     displaySymptomQuestion(l_question);
                     setIsAnswered(l_question);
                     asnwered(l_question, 2);
+                    addAnswer(l_question, "", 2);
                     symptomQuestIndex++;
                     index++;
                 }
@@ -317,6 +328,7 @@ public class Expertise_display extends AppCompatActivity {
                     displaySymptomQuestion(l_question);
                     setIsAnswered(l_question);
                     asnwered(l_question, 4);
+                    addAnswer(l_question, "", 4);
                     symptomQuestIndex++;
                 }
                 else
@@ -333,6 +345,7 @@ public class Expertise_display extends AppCompatActivity {
                     displaySymptomQuestion(l_question);
                     setIsAnswered(l_question);
                     asnwered(l_question, 0);
+                    addAnswer(l_question, "", 0);
                     symptomQuestIndex++;
                     index++;
                 }
@@ -350,6 +363,7 @@ public class Expertise_display extends AppCompatActivity {
                      displaySymptomQuestion(l_question);
                      setIsAnswered(l_question);
                      asnwered(l_question, 3);
+                     addAnswer(l_question, "", 3);
                      symptomQuestIndex++;
                      index++;
                 }
@@ -367,6 +381,7 @@ public class Expertise_display extends AppCompatActivity {
                     displaySymptomQuestion(l_question);
                     setIsAnswered(l_question);
                     asnwered(l_question, 1);
+                    addAnswer(l_question, "", 1);
                     symptomQuestIndex++;
                     index++;
                 }
@@ -383,6 +398,29 @@ public class Expertise_display extends AppCompatActivity {
         private ArrayList<Hypothesis> test;
         private TextView tResult;
 
+        public static HashMap<String, String> sortByValue(HashMap<String, String> hm)
+        {
+            // Create a list from elements of HashMap
+            List<Map.Entry<String, String> > list =
+                    new LinkedList<Map.Entry<String, String> >(hm.entrySet());
+
+            // Sort the list
+            Collections.sort(list, new Comparator<Map.Entry<String, String> >() {
+                public int compare(Map.Entry<String, String> o1,
+                                   Map.Entry<String, String> o2)
+                {
+                    return (o2.getValue()).compareTo(o1.getValue());
+                }
+            });
+
+            // put data from sorted list to hashmap
+            HashMap<String, String> temp = new LinkedHashMap<String, String>();
+            for (Map.Entry<String, String> aa : list) {
+                temp.put(aa.getKey(), aa.getValue());
+            }
+            return temp;
+        }
+
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -393,25 +431,19 @@ public class Expertise_display extends AppCompatActivity {
             tResult.setMovementMethod(new ScrollingMovementMethod());
 
             String msg = "";
-            ArrayList<Hypothesis> l_test = test;
+            HashMap<String, String> tmp = new HashMap<>();
 
-            for(int i = 0; i < l_test.size(); i++)
+            for (int i = 0; i < test.size(); ++i)
             {
-                BigDecimal l_msg = new BigDecimal("0.0");
-                String l_name = "";
-                for(int j = 0; j < l_test.size(); j++)
-                {
-                    BigDecimal l_val = new BigDecimal(l_test.get(j).getHypothseisProbability());
-                    if(l_msg.compareTo(l_val) == -1)
-                    {
-                        l_msg = l_val;
-                        l_name = l_test.get(j).getHypothesisName();
-                        l_test.remove(j);
-                    }
-                }
-                msg += l_name + " " + l_msg.toPlainString() + '\n';
+                tmp.put(test.get(i).getHypothesisName(), test.get(i).getHypothseisProbability());
             }
+            Map<String, String> sorted = sortByValue(tmp);
 
+
+            for (Map.Entry<String, String> entry : sorted.entrySet())
+            {
+                msg += entry.getKey() + '\t' + '\t' + '\t' + '\r' + entry.getValue();
+            }
             tResult.setText(msg);
         }
     }
